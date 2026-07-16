@@ -1,9 +1,9 @@
 /**
  * Bonus Features Components
- * 
+ *
  * These are placeholder/starter components for bonus features.
  * Feel free to expand and customize them!
- * 
+ *
  * Available Bonus Features:
  * - Dark/Light Mode (10 points)
  * - QR code for address (10 points)
@@ -15,32 +15,85 @@
  * - Address book (15 points)
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { FaMoon, FaSun, FaQrcode, FaChartLine, FaSearch, FaBook } from 'react-icons/fa';
-import { Card } from './example-components';
+import { useEffect, useState } from "react";
+import {
+  FaMoon,
+  FaSun,
+  FaQrcode,
+  FaChartLine,
+  FaSearch,
+  FaBook,
+} from "react-icons/fa";
+import { Card } from "./example-components";
 
 // ============================================
 // 1. Dark/Light Mode Toggle (10 points)
 // ============================================
 export function ThemeToggle() {
-  const [isDark, setIsDark] = useState(true);
+  const [isDark, setIsDark] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  const toggleTheme = () => {
-    setIsDark(!isDark);
-    // TODO: Implement actual theme switching
-    // Hint: Use CSS variables or Tailwind's dark mode
-    document.documentElement.classList.toggle('dark');
+  useEffect(() => {
+    setMounted(true);
+    // Check for saved preference or system preference
+    const saved = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia(
+      "(prefers-color-scheme: dark)",
+    ).matches;
+    const shouldBeDark = saved ? saved === "dark" : prefersDark;
+
+    setIsDark(shouldBeDark);
+    updateTheme(shouldBeDark);
+  }, []);
+
+  const updateTheme = (dark: boolean) => {
+    const html = document.documentElement;
+    if (dark) {
+      html.classList.add("dark");
+      localStorage.setItem("theme", "dark");
+    } else {
+      html.classList.remove("dark");
+      localStorage.setItem("theme", "light");
+    }
   };
+
+  const toggleDarkMode = () => {
+    const newState = !isDark;
+    setIsDark(newState);
+    updateTheme(newState);
+  };
+
+  if (!mounted) return null;
 
   return (
     <button
-      onClick={toggleTheme}
-      className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
-      title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      onClick={toggleDarkMode}
+      className="fixed top-4 right-4 p-2 rounded-lg bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+      aria-label="Toggle dark mode"
     >
-      {isDark ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-blue-400" />}
+      {isDark ? (
+        <svg
+          className="w-5 h-5 text-yellow-400"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fillRule="evenodd"
+            d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.707.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm5.657-9.193a1 1 0 00-1.414 0l-.707.707A1 1 0 005.05 6.464l.707-.707a1 1 0 011.414 0zm0 18.386a1 1 0 001.414 0l.707-.707a1 1 0 00-1.414-1.414l-.707.707a1 1 0 000 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ) : (
+        <svg
+          className="w-5 h-5 text-gray-600"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z" />
+        </svg>
+      )}
     </button>
   );
 }
@@ -57,7 +110,7 @@ export function AddressQRCode({ address }: { address: string }) {
         onClick={() => setShowQR(!showQR)}
         className="text-blue-400 hover:text-blue-300 flex items-center gap-2 text-sm"
       >
-        <FaQrcode /> {showQR ? 'Hide QR' : 'Show QR Code'}
+        <FaQrcode /> {showQR ? "Hide QR" : "Show QR Code"}
       </button>
 
       {showQR && (
@@ -69,7 +122,9 @@ export function AddressQRCode({ address }: { address: string }) {
             <div className="w-48 h-48 bg-gray-200 flex items-center justify-center mx-auto">
               <p className="text-gray-500 text-sm">QR Code Here</p>
             </div>
-            <p className="text-gray-600 text-xs mt-2 font-mono break-all">{address}</p>
+            <p className="text-gray-600 text-xs mt-2 font-mono break-all">
+              {address}
+            </p>
           </div>
         </div>
       )}
@@ -99,8 +154,12 @@ export function BalanceChart() {
 // ============================================
 // 4. Search/Filter Transactions (10 points)
 // ============================================
-export function TransactionFilter({ onFilter }: { onFilter: (query: string) => void }) {
-  const [query, setQuery] = useState('');
+export function TransactionFilter({
+  onFilter,
+}: {
+  onFilter: (query: string) => void;
+}) {
+  const [query, setQuery] = useState("");
 
   const handleSearch = (value: string) => {
     setQuery(value);
@@ -143,12 +202,16 @@ export function TransactionConfirmation({
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-white/10">
         <div className="p-6">
-          <h3 className="text-2xl font-bold text-white mb-4">Confirm Transaction</h3>
-          
+          <h3 className="text-2xl font-bold text-white mb-4">
+            Confirm Transaction
+          </h3>
+
           <div className="space-y-3 mb-6">
             <div className="bg-white/5 rounded-lg p-3">
               <p className="text-white/60 text-sm">Recipient</p>
-              <p className="text-white font-mono text-sm break-all">{recipient}</p>
+              <p className="text-white font-mono text-sm break-all">
+                {recipient}
+              </p>
             </div>
             <div className="bg-white/5 rounded-lg p-3">
               <p className="text-white/60 text-sm">Amount</p>
@@ -180,7 +243,9 @@ export function TransactionConfirmation({
 // 6. Address Book (15 points)
 // ============================================
 export function AddressBook() {
-  const [addresses, setAddresses] = useState<Array<{ name: string; address: string }>>([]);
+  const [addresses, setAddresses] = useState<
+    Array<{ name: string; address: string }>
+  >([]);
   const [showAdd, setShowAdd] = useState(false);
 
   return (
@@ -190,7 +255,7 @@ export function AddressBook() {
           onClick={() => setShowAdd(!showAdd)}
           className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-2"
         >
-          <FaBook /> {showAdd ? 'Close' : 'Add Address'}
+          <FaBook /> {showAdd ? "Close" : "Add Address"}
         </button>
       </div>
 
@@ -222,10 +287,15 @@ export function AddressBook() {
       ) : (
         <div className="space-y-2">
           {addresses.map((contact, index) => (
-            <div key={index} className="bg-white/5 rounded-lg p-3 flex justify-between items-center">
+            <div
+              key={index}
+              className="bg-white/5 rounded-lg p-3 flex justify-between items-center"
+            >
               <div>
                 <p className="text-white font-semibold">{contact.name}</p>
-                <p className="text-white/60 text-xs font-mono">{contact.address.slice(0, 20)}...</p>
+                <p className="text-white/60 text-xs font-mono">
+                  {contact.address.slice(0, 20)}...
+                </p>
               </div>
               <button className="text-blue-400 hover:text-blue-300 text-sm">
                 Use
@@ -241,12 +311,15 @@ export function AddressBook() {
 // ============================================
 // 7. Loading Animations (Example)
 // ============================================
-export function AnimatedCard({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
+export function AnimatedCard({
+  children,
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  delay?: number;
+}) {
   return (
-    <div
-      className="animate-fadeIn"
-      style={{ animationDelay: `${delay}ms` }}
-    >
+    <div className="animate-fadeIn" style={{ animationDelay: `${delay}ms` }}>
       {children}
     </div>
   );
@@ -269,4 +342,3 @@ export function AnimatedCard({ children, delay = 0 }: { children: React.ReactNod
   animation: fadeIn 0.5s ease-out forwards;
 }
 */
-
