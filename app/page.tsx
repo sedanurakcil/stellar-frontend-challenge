@@ -1,22 +1,23 @@
 /**
  * Stellar Payment Dashboard - Main Page
- * 
+ *
  * This is the main page that brings all components together.
  * All blockchain logic is in lib/stellar-helper.ts (DO NOT MODIFY)
- * 
+ *
  * Your job: Make this UI/UX amazing! 🎨
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import WalletConnection from '@/components/WalletConnection';
-import BalanceDisplay from '@/components/BalanceDisplay';
-import PaymentForm from '@/components/PaymentForm';
-import TransactionHistory from '@/components/TransactionHistory';
+import { useState } from "react";
+import WalletConnection from "@/components/WalletConnection";
+import BalanceDisplay from "@/components/BalanceDisplay";
+import PaymentForm from "@/components/PaymentForm";
+import TransactionHistory from "@/components/TransactionHistory";
+import { ThemeToggle } from "@/components/BonusFeatures";
 
 export default function Home() {
-  const [publicKey, setPublicKey] = useState<string>('');
+  const [publicKey, setPublicKey] = useState<string>("");
   const [isConnected, setIsConnected] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -26,31 +27,34 @@ export default function Home() {
   };
 
   const handleDisconnect = () => {
-    setPublicKey('');
+    setPublicKey("");
     setIsConnected(false);
   };
 
   const handlePaymentSuccess = () => {
     // Refresh balance and transaction history
-    setRefreshKey(prev => prev + 1);
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-violet-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b border-white/10 backdrop-blur-sm bg-black/20">
         <div className="max-w-7xl mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center text-2xl">
-                ⭐
-              </div>
+              <ThemeToggle />
               <div>
-                <h1 className="text-2xl font-bold text-white">Stellar Dashboard</h1>
-                <p className="text-white/60 text-sm">Testnet Payment Interface</p>
+                <h1 className="text-2xl font-bold text-white">
+                  Stellar Dashboard
+                </h1>
+                <p className="text-white/60 text-sm">
+                  Testnet Payment Interface
+                </p>
               </div>
             </div>
-            
+            <div className="mb-8"></div>
+
             <div className="flex items-center gap-4">
               <a
                 href="https://stellar.org"
@@ -82,15 +86,19 @@ export default function Home() {
               Welcome to Stellar Payment Dashboard! 👋
             </h2>
             <p className="text-white/70 max-w-2xl mx-auto">
-              Connect your wallet to view your balance, send XLM payments, and track your transaction history.
-              All on Stellar's lightning-fast blockchain.
+              Connect your wallet to view your balance, send XLM payments, and
+              track your transaction history. All on Stellar's lightning-fast
+              blockchain.
             </p>
           </div>
         )}
 
         {/* Wallet Connection */}
         <div className="mb-8">
-          <WalletConnection onConnect={handleConnect} onDisconnect={handleDisconnect} />
+          <WalletConnection
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+          />
         </div>
 
         {/* Dashboard Content - Only show when connected */}
@@ -105,7 +113,10 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-8">
               {/* Payment Form */}
               <div>
-                <PaymentForm publicKey={publicKey} onSuccess={handlePaymentSuccess} />
+                <PaymentForm
+                  publicKey={publicKey}
+                  onSuccess={handlePaymentSuccess}
+                />
               </div>
 
               {/* Transaction History */}
@@ -118,7 +129,9 @@ export default function Home() {
             <div className="grid md:grid-cols-3 gap-6">
               <div className="bg-white/5 backdrop-blur-lg rounded-xl p-6 border border-white/10">
                 <div className="text-3xl mb-3">⚡</div>
-                <h3 className="text-white font-semibold mb-2">Lightning Fast</h3>
+                <h3 className="text-white font-semibold mb-2">
+                  Lightning Fast
+                </h3>
                 <p className="text-white/60 text-sm">
                   Transactions settle in 3-5 seconds on Stellar network
                 </p>
@@ -150,9 +163,12 @@ export default function Home() {
               <div className="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4 text-2xl">
                 1️⃣
               </div>
-              <h3 className="text-white font-semibold mb-2">Install a Wallet</h3>
+              <h3 className="text-white font-semibold mb-2">
+                Install a Wallet
+              </h3>
               <p className="text-white/60 text-sm">
-                Choose any Stellar wallet: Freighter, xBull, Lobstr, Albedo, and more!
+                Choose any Stellar wallet: Freighter, xBull, Lobstr, Albedo, and
+                more!
               </p>
             </div>
 
@@ -162,7 +178,8 @@ export default function Home() {
               </div>
               <h3 className="text-white font-semibold mb-2">Connect</h3>
               <p className="text-white/60 text-sm">
-                Click the connect button above and approve the connection request
+                Click the connect button above and approve the connection
+                request
               </p>
             </div>
 

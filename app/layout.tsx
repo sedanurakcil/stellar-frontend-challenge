@@ -1,6 +1,4 @@
-import "./globals.css";
 import type { Metadata } from "next";
-import { ThemeToggle } from "@/components/BonusFeatures";
 
 export const metadata: Metadata = {
   title: "Stellar Payment Dashboard",
@@ -14,10 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
-        <ThemeToggle />
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   );
 }
