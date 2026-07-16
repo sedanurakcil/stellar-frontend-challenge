@@ -1,9 +1,10 @@
-import type { Metadata } from 'next';
-import './globals.css';
+import "./globals.css";
+import type { Metadata } from "next";
+import { ThemeToggle } from "@/components/BonusFeatures";
 
 export const metadata: Metadata = {
-  title: 'Stellar Payment Dashboard',
-  description: 'Build a beautiful payment dashboard on Stellar blockchain',
+  title: "Stellar Payment Dashboard",
+  description: "Build a beautiful payment dashboard on Stellar blockchain",
 };
 
 export default function RootLayout({
@@ -13,7 +14,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ThemeToggle />
+        {children}
+      </body>
     </html>
   );
 }
