@@ -1,8 +1,8 @@
 /**
  * TransactionHistory Component
- * 
+ *
  * Displays recent transactions for the connected wallet
- * 
+ *
  * Features:
  * - List recent transactions
  * - Show: amount, from/to, date
@@ -12,12 +12,18 @@
  * - Refresh functionality
  */
 
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { stellar } from '@/lib/stellar-helper';
-import { FaHistory, FaSync, FaArrowUp, FaArrowDown, FaExternalLinkAlt } from 'react-icons/fa';
-import { Card, EmptyState } from './example-components';
+import { useState, useEffect } from "react";
+import { stellar } from "@/lib/stellar-helper";
+import {
+  FaHistory,
+  FaSync,
+  FaArrowUp,
+  FaArrowDown,
+  FaExternalLinkAlt,
+} from "react-icons/fa";
+import { Card, EmptyState } from "./example-components";
 
 interface Transaction {
   id: string;
@@ -34,7 +40,9 @@ interface TransactionHistoryProps {
   publicKey: string;
 }
 
-export default function TransactionHistory({ publicKey }: TransactionHistoryProps) {
+export default function TransactionHistory({
+  publicKey,
+}: TransactionHistoryProps) {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -46,7 +54,7 @@ export default function TransactionHistory({ publicKey }: TransactionHistoryProp
       const txs = await stellar.getRecentTransactions(publicKey, limit);
       setTransactions(txs);
     } catch (error) {
-      console.error('Error fetching transactions:', error);
+      console.error("Error fetching transactions:", error);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -67,20 +75,20 @@ export default function TransactionHistory({ publicKey }: TransactionHistoryProp
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
 
-    if (diffMins < 1) return 'Just now';
+    if (diffMins < 1) return "Just now";
     if (diffMins < 60) return `${diffMins}m ago`;
     if (diffHours < 24) return `${diffHours}h ago`;
     if (diffDays < 7) return `${diffDays}d ago`;
-    
-    return date.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric',
-      year: date.getFullYear() !== now.getFullYear() ? 'numeric' : undefined
+
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: date.getFullYear() !== now.getFullYear() ? "numeric" : undefined,
     });
   };
 
   const formatAddress = (address?: string): string => {
-    if (!address) return 'N/A';
+    if (!address) return "N/A";
     return stellar.formatAddress(address, 4, 4);
   };
 
@@ -94,7 +102,7 @@ export default function TransactionHistory({ publicKey }: TransactionHistoryProp
         <div className="space-y-3">
           {[1, 2, 3].map((i) => (
             <div key={i} className="animate-pulse">
-              <div className="h-20 bg-white/5 rounded-lg"></div>
+              <div className="h-20 bg-background-secondary rounded-lg"></div>
             </div>
           ))}
         </div>
@@ -105,17 +113,17 @@ export default function TransactionHistory({ publicKey }: TransactionHistoryProp
   return (
     <Card>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-          <FaHistory className="text-purple-400" />
+        <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+          <FaHistory className="text-accent" />
           Transaction History
         </h2>
         <button
           onClick={fetchTransactions}
           disabled={refreshing}
-          className="text-blue-400 hover:text-blue-300 disabled:opacity-50 transition-colors"
+          className="text-accent hover:opacity-80 disabled:opacity-50 transition-colors"
           title="Refresh transactions"
         >
-          <FaSync className={`text-xl ${refreshing ? 'animate-spin' : ''}`} />
+          <FaSync className={`text-xl ${refreshing ? "animate-spin" : ""}`} />
         </button>
       </div>
 
@@ -129,40 +137,45 @@ export default function TransactionHistory({ publicKey }: TransactionHistoryProp
         <div className="space-y-3">
           {transactions.map((tx) => {
             const outgoing = isOutgoing(tx);
-            
+
             return (
               <div
                 key={tx.id}
-                className="bg-white/5 hover:bg-white/10 rounded-xl p-4 transition-all border border-white/10 hover:border-white/20"
+                className="bg-background-secondary/80 hover:bg-background-secondary rounded-xl p-4 transition-all border border-border hover:border-accent/40"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      outgoing 
-                        ? 'bg-red-500/20 text-red-400' 
-                        : 'bg-green-500/20 text-green-400'
-                    }`}>
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                        outgoing
+                          ? "bg-error/20 text-error"
+                          : "bg-success/20 text-success"
+                      }`}
+                    >
                       {outgoing ? <FaArrowUp /> : <FaArrowDown />}
                     </div>
                     <div>
-                      <p className="text-white font-semibold">
-                        {outgoing ? 'Sent' : 'Received'}
+                      <p className="text-foreground font-semibold">
+                        {outgoing ? "Sent" : "Received"}
                       </p>
                       {tx.amount && (
-                        <p className={`text-lg font-bold ${
-                          outgoing ? 'text-red-400' : 'text-green-400'
-                        }`}>
-                          {outgoing ? '-' : '+'}{parseFloat(tx.amount).toFixed(2)} {tx.asset || 'XLM'}
+                        <p
+                          className={`text-lg font-bold ${
+                            outgoing ? "text-error" : "text-success"
+                          }`}
+                        >
+                          {outgoing ? "-" : "+"}
+                          {parseFloat(tx.amount).toFixed(2)} {tx.asset || "XLM"}
                         </p>
                       )}
                     </div>
                   </div>
-                  
+
                   <a
-                    href={stellar.getExplorerLink(tx.hash, 'tx')}
+                    href={stellar.getExplorerLink(tx.hash, "tx")}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 text-sm flex items-center gap-1 transition-colors"
+                    className="text-accent hover:opacity-80 text-sm flex items-center gap-1 transition-colors"
                   >
                     Details <FaExternalLinkAlt className="text-xs" />
                   </a>
@@ -170,18 +183,28 @@ export default function TransactionHistory({ publicKey }: TransactionHistoryProp
 
                 <div className="grid grid-cols-2 gap-3 text-sm">
                   <div>
-                    <p className="text-white/40 text-xs mb-1">From</p>
-                    <p className="text-white/80 font-mono">{formatAddress(tx.from)}</p>
+                    <p className="text-foreground-secondary text-xs mb-1">
+                      From
+                    </p>
+                    <p className="text-foreground font-mono">
+                      {formatAddress(tx.from)}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-white/40 text-xs mb-1">To</p>
-                    <p className="text-white/80 font-mono">{formatAddress(tx.to)}</p>
+                    <p className="text-foreground-secondary text-xs mb-1">To</p>
+                    <p className="text-foreground font-mono">
+                      {formatAddress(tx.to)}
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex justify-between items-center mt-3 pt-3 border-t border-white/10">
-                  <p className="text-white/40 text-xs">{formatDate(tx.createdAt)}</p>
-                  <p className="text-white/30 text-xs font-mono">{tx.hash.slice(0, 12)}...</p>
+                <div className="flex justify-between items-center mt-3 pt-3 border-t border-border">
+                  <p className="text-foreground-secondary text-xs">
+                    {formatDate(tx.createdAt)}
+                  </p>
+                  <p className="text-foreground-secondary text-xs font-mono">
+                    {tx.hash.slice(0, 12)}...
+                  </p>
                 </div>
               </div>
             );
@@ -191,12 +214,12 @@ export default function TransactionHistory({ publicKey }: TransactionHistoryProp
 
       {transactions.length > 0 && (
         <div className="mt-4 text-center">
-          <p className="text-white/40 text-sm">
-            Showing last {transactions.length} transaction{transactions.length !== 1 ? 's' : ''}
+          <p className="text-foreground-secondary text-sm">
+            Showing last {transactions.length} transaction
+            {transactions.length !== 1 ? "s" : ""}
           </p>
         </div>
       )}
     </Card>
   );
 }
-

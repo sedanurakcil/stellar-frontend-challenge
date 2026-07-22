@@ -1,8 +1,8 @@
 /**
  * PaymentForm Component
- * 
+ *
  * Allows users to send XLM payments
- * 
+ *
  * Features:
  * - Input for recipient address
  * - Input for amount
@@ -12,46 +12,55 @@
  * - Error handling with user-friendly messages
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { stellar } from '@/lib/stellar-helper';
-import { FaPaperPlane, FaCheckCircle } from 'react-icons/fa';
-import { Card, Input, Button, Alert } from './example-components';
+import { useState } from "react";
+import { stellar } from "@/lib/stellar-helper";
+import { FaPaperPlane, FaCheckCircle } from "react-icons/fa";
+import { Card, Input, Button, Alert } from "./example-components";
 
 interface PaymentFormProps {
   publicKey: string;
   onSuccess?: () => void;
 }
 
-export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) {
-  const [recipient, setRecipient] = useState('');
-  const [amount, setAmount] = useState('');
-  const [memo, setMemo] = useState('');
+export default function PaymentForm({
+  publicKey,
+  onSuccess,
+}: PaymentFormProps) {
+  const [recipient, setRecipient] = useState("");
+  const [amount, setAmount] = useState("");
+  const [memo, setMemo] = useState("");
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ recipient?: string; amount?: string }>({});
-  const [alert, setAlert] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
-  const [txHash, setTxHash] = useState('');
+  const [errors, setErrors] = useState<{ recipient?: string; amount?: string }>(
+    {},
+  );
+  const [alert, setAlert] = useState<{
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
+  const [txHash, setTxHash] = useState("");
 
   const validateForm = (): boolean => {
     const newErrors: { recipient?: string; amount?: string } = {};
 
     // Validate recipient address
     if (!recipient.trim()) {
-      newErrors.recipient = 'Recipient address is required';
-    } else if (recipient.length !== 56 || !recipient.startsWith('G')) {
-      newErrors.recipient = 'Invalid Stellar address (must start with G and be 56 characters)';
+      newErrors.recipient = "Recipient address is required";
+    } else if (recipient.length !== 56 || !recipient.startsWith("G")) {
+      newErrors.recipient =
+        "Invalid Stellar address (must start with G and be 56 characters)";
     }
 
     // Validate amount
     if (!amount.trim()) {
-      newErrors.amount = 'Amount is required';
+      newErrors.amount = "Amount is required";
     } else {
       const numAmount = parseFloat(amount);
       if (isNaN(numAmount) || numAmount <= 0) {
-        newErrors.amount = 'Amount must be a positive number';
+        newErrors.amount = "Amount must be a positive number";
       } else if (numAmount < 0.0000001) {
-        newErrors.amount = 'Amount is too small (minimum: 0.0000001 XLM)';
+        newErrors.amount = "Amount is too small (minimum: 0.0000001 XLM)";
       }
     }
 
@@ -61,7 +70,7 @@ export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
@@ -69,7 +78,7 @@ export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) 
     try {
       setLoading(true);
       setAlert(null);
-      setTxHash('');
+      setTxHash("");
 
       const result = await stellar.sendPayment({
         from: publicKey,
@@ -81,14 +90,14 @@ export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) 
       if (result.success) {
         setTxHash(result.hash);
         setAlert({
-          type: 'success',
+          type: "success",
           message: `Payment sent successfully! 🎉`,
         });
-        
+
         // Clear form
-        setRecipient('');
-        setAmount('');
-        setMemo('');
+        setRecipient("");
+        setAmount("");
+        setMemo("");
         setErrors({});
 
         // Call success callback
@@ -97,19 +106,19 @@ export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) 
         }
       }
     } catch (error: any) {
-      console.error('Payment error:', error);
-      let errorMessage = 'Failed to send payment. ';
-      
-      if (error.message.includes('insufficient')) {
-        errorMessage += 'Insufficient balance.';
-      } else if (error.message.includes('destination')) {
-        errorMessage += 'Invalid destination account.';
+      console.error("Payment error:", error);
+      let errorMessage = "Failed to send payment. ";
+
+      if (error.message.includes("insufficient")) {
+        errorMessage += "Insufficient balance.";
+      } else if (error.message.includes("destination")) {
+        errorMessage += "Invalid destination account.";
       } else {
-        errorMessage += error.message || 'Please try again.';
+        errorMessage += error.message || "Please try again.";
       }
 
       setAlert({
-        type: 'error',
+        type: "error",
         message: errorMessage,
       });
     } finally {
@@ -119,8 +128,8 @@ export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) 
 
   return (
     <Card>
-      <h2 className="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-        <FaPaperPlane className="text-blue-400" />
+      <h2 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
+        <FaPaperPlane className="text-accent" />
         Send Payment
       </h2>
 
@@ -135,18 +144,24 @@ export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) 
       )}
 
       {txHash && (
-        <div className="mb-4 p-4 bg-green-500/10 border border-green-500/30 rounded-lg">
+        <div className="mb-4 p-4 bg-success/10 border border-success/30 rounded-lg">
           <div className="flex items-start gap-3">
-            <FaCheckCircle className="text-green-400 text-xl flex-shrink-0 mt-1" />
+            <FaCheckCircle className="text-success text-xl flex-shrink-0 mt-1" />
             <div className="flex-1">
-              <p className="text-green-400 font-semibold mb-2">Transaction Confirmed!</p>
-              <p className="text-white/70 text-sm mb-2">Transaction Hash:</p>
-              <p className="text-white/90 text-xs font-mono break-all mb-3">{txHash}</p>
+              <p className="text-success font-semibold mb-2">
+                Transaction Confirmed!
+              </p>
+              <p className="text-foreground-secondary text-sm mb-2">
+                Transaction Hash:
+              </p>
+              <p className="text-foreground text-xs font-mono break-all mb-3">
+                {txHash}
+              </p>
               <a
-                href={stellar.getExplorerLink(txHash, 'tx')}
+                href={stellar.getExplorerLink(txHash, "tx")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-400 hover:text-blue-300 text-sm underline"
+                className="text-accent hover:opacity-80 text-sm underline"
               >
                 View on Stellar Expert →
               </a>
@@ -202,12 +217,12 @@ export default function PaymentForm({ publicKey, onSuccess }: PaymentFormProps) 
         </div>
       </form>
 
-      <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-        <p className="text-blue-200/90 text-xs">
-          ⚠️ <strong>Double-check</strong> the recipient address before sending. Transactions on the blockchain are irreversible!
+      <div className="mt-4 p-3 bg-accent/10 border border-accent/30 rounded-lg">
+        <p className="text-accent text-xs">
+          ⚠️ <strong>Double-check</strong> the recipient address before sending.
+          Transactions on the blockchain are irreversible!
         </p>
       </div>
     </Card>
   );
 }
-

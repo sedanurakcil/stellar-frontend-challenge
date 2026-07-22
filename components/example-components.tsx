@@ -1,13 +1,13 @@
 /**
  * Example Components
- * 
+ *
  * These are example components you can use as inspiration for your UI.
  * Feel free to modify, delete, or create your own components!
  */
 
-'use client';
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
 
 // Example: Loading Spinner
 export function LoadingSpinner() {
@@ -21,17 +21,17 @@ export function LoadingSpinner() {
 }
 
 // Example: Balance Card
-export function BalanceCard({ 
-  balance, 
-  label 
-}: { 
-  balance: string; 
-  label: string; 
+export function BalanceCard({
+  balance,
+  label,
+}: {
+  balance: string;
+  label: string;
 }) {
   return (
-    <div className="bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl p-6 shadow-lg">
-      <p className="text-white/80 text-sm mb-2">{label}</p>
-      <p className="text-4xl font-bold text-white">{balance}</p>
+    <div className="bg-gradient-to-br from-accent to-background-secondary rounded-xl p-6 shadow-lg">
+      <p className="text-foreground-secondary text-sm mb-2">{label}</p>
+      <p className="text-4xl font-bold text-foreground">{balance}</p>
     </div>
   );
 }
@@ -53,29 +53,29 @@ export function TransactionItem({
   explorerLink: string;
 }) {
   return (
-    <div className="bg-white/5 hover:bg-white/10 rounded-lg p-4 transition-colors">
+    <div className="bg-background-secondary/80 hover:bg-background-secondary rounded-lg p-4 transition-colors border border-border">
       <div className="flex justify-between items-start mb-2">
         <div>
-          <p className="text-white font-semibold">
-            {type === 'payment' ? '💸' : '📝'} {type}
+          <p className="text-foreground font-semibold">
+            {type === "payment" ? "💸" : "📝"} {type}
           </p>
           {amount && (
-            <p className="text-white/80">
-              {amount} {asset || 'XLM'}
+            <p className="text-foreground-secondary">
+              {amount} {asset || "XLM"}
             </p>
           )}
         </div>
-        
+
         <a
           href={explorerLink}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-blue-400 hover:text-blue-300 text-sm"
+          className="text-accent hover:text-foreground text-sm"
         >
           View →
         </a>
       </div>
-      <div className="flex justify-between text-xs text-white/50">
+      <div className="flex justify-between text-xs text-foreground-secondary">
         <span>{new Date(date).toLocaleString()}</span>
         <span className="font-mono">{hash.slice(0, 8)}...</span>
       </div>
@@ -96,9 +96,9 @@ export function CopyButton({ text }: { text: string }) {
   return (
     <button
       onClick={handleCopy}
-      className="text-blue-400 hover:text-blue-300 text-sm"
+      className="text-accent hover:text-foreground text-sm"
     >
-      {copied ? '✓ Copied!' : '📋 Copy'}
+      {copied ? "✓ Copied!" : "📋 Copy"}
     </button>
   );
 }
@@ -109,14 +109,14 @@ export function Alert({
   message,
   onClose,
 }: {
-  type: 'success' | 'error' | 'info';
+  type: "success" | "error" | "info";
   message: string;
   onClose: () => void;
 }) {
   const colors = {
-    success: 'bg-green-500',
-    error: 'bg-red-500',
-    info: 'bg-blue-500',
+    success: "bg-green-500",
+    error: "bg-red-500",
+    info: "bg-blue-500",
   };
 
   return (
@@ -124,10 +124,7 @@ export function Alert({
       className={`${colors[type]} text-white px-6 py-4 rounded-lg shadow-lg flex justify-between items-center`}
     >
       <span>{message}</span>
-      <button
-        onClick={onClose}
-        className="ml-4 text-white/80 hover:text-white"
-      >
+      <button onClick={onClose} className="ml-4 text-white/80 hover:text-white">
         ✕
       </button>
     </div>
@@ -143,9 +140,9 @@ export function Card({
   children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 shadow-2xl">
+    <div className="bg-background-secondary/80 backdrop-blur-lg rounded-2xl p-6 shadow-2xl border border-border">
       {title && (
-        <h2 className="text-2xl font-bold text-white mb-4">{title}</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-4">{title}</h2>
       )}
       {children}
     </div>
@@ -156,7 +153,7 @@ export function Card({
 export function Input({
   label,
   placeholder,
-  type = 'text',
+  type = "text",
   value,
   onChange,
   error,
@@ -170,15 +167,17 @@ export function Input({
 }) {
   return (
     <div>
-      <label className="block text-white/80 text-sm mb-2">{label}</label>
+      <label className="block text-foreground-secondary text-sm mb-2">
+        {label}
+      </label>
       <input
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder={placeholder}
-        className="w-full bg-white/5 border border-white/20 rounded-lg px-4 py-3 text-white placeholder-white/40 focus:outline-none focus:border-white/40"
+        className="w-full bg-background border border-border rounded-lg px-4 py-3 text-foreground placeholder-foreground-secondary focus:outline-none focus:border-accent"
       />
-      {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
+      {error && <p className="text-error text-sm mt-1">{error}</p>}
     </div>
   );
 }
@@ -187,20 +186,20 @@ export function Input({
 export function Button({
   children,
   onClick,
-  variant = 'primary',
+  variant = "primary",
   disabled = false,
   fullWidth = false,
 }: {
   children: React.ReactNode;
   onClick: () => void;
-  variant?: 'primary' | 'secondary' | 'danger';
+  variant?: "primary" | "secondary" | "danger";
   disabled?: boolean;
   fullWidth?: boolean;
 }) {
   const variants = {
-    primary: 'bg-blue-600 hover:bg-blue-700',
-    secondary: 'bg-gray-600 hover:bg-gray-700',
-    danger: 'bg-red-600 hover:bg-red-700',
+    primary: "bg-accent hover:opacity-90",
+    secondary: "bg-background-secondary hover:opacity-90",
+    danger: "bg-error hover:opacity-90",
   };
 
   return (
@@ -208,8 +207,8 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={`${variants[variant]} ${
-        fullWidth ? 'w-full' : ''
-      } text-white font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
+        fullWidth ? "w-full" : ""
+      } text-foreground font-bold py-3 px-6 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {children}
     </button>
@@ -229,8 +228,8 @@ export function EmptyState({
   return (
     <div className="text-center py-12">
       <div className="text-6xl mb-4">{icon}</div>
-      <h3 className="text-white text-xl font-semibold mb-2">{title}</h3>
-      <p className="text-white/60">{description}</p>
+      <h3 className="text-foreground text-xl font-semibold mb-2">{title}</h3>
+      <p className="text-foreground-secondary">{description}</p>
     </div>
   );
 }
@@ -251,12 +250,12 @@ export function Modal({
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full">
-        <div className="flex justify-between items-center p-6 border-b border-white/10">
-          <h3 className="text-2xl font-bold text-white">{title}</h3>
+      <div className="bg-background rounded-2xl shadow-2xl max-w-md w-full border border-border">
+        <div className="flex justify-between items-center p-6 border-b border-border">
+          <h3 className="text-2xl font-bold text-foreground">{title}</h3>
           <button
             onClick={onClose}
-            className="text-white/60 hover:text-white text-2xl"
+            className="text-foreground-secondary hover:text-foreground text-2xl"
           >
             ✕
           </button>
