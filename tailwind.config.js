@@ -9,8 +9,22 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        // Backgrounds
         background: "var(--bg)",
+        "background-secondary": "var(--bg-secondary)",
+
+        // Text
         foreground: "var(--text)",
+        "foreground-secondary": "var(--text-secondary)",
+
+        // UI
+        border: "var(--border)",
+
+        // Status
+        accent: "var(--accent)",
+        success: "var(--success)",
+        warning: "var(--warning)",
+        error: "var(--error)",
       },
       animation: {
         spin: "spin 1s linear infinite",
